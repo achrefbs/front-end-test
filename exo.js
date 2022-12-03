@@ -53,28 +53,27 @@ class Map {
     return rawMap;
   }
 
-  getColoredMap() {
-    var coloredMap = [];
+  setFirstRow() {
     var row = [];
-    console.log(this.map.length);
-    for (var i = 0; i < this.map.length; i++) {
-      
+    for (var i = 0; i < this.map[0].length; i++) {
       if (this.map[0][i] === WATER_POINT_TYPE) {
-        console.log("printing water");
         row.push(DEFAULT_WATER_COLOR);
       } 
       else if (this.map[0][i-1] === EARTH_POINT_TYPE) {
-        console.log("printing earth");
         var last_used = row[i-1];
         row.push(last_used);
       }
       else {
-        console.log("printing random");
         row.push(this.generateRandomColor());
       }
     }
-    // console.log(row);
-    coloredMap.push(row);
+    return row;
+  }
+
+  getColoredMap() {
+    var coloredMap = [];
+
+    coloredMap.push(this.setFirstRow());
     for (var i = 1; i < this.map.length; i++) {
       var row = [];
       for (var j = 0; j < this.map[i].length; j++) {
