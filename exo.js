@@ -53,54 +53,33 @@ class Map {
     return rawMap;
   }
 
-  setFirstRow() {
-    var row = [];
-    for (var i = 0; i < this.map[0].length; i++) {
-      if (this.map[0][i] === WATER_POINT_TYPE) {
-        row.push(DEFAULT_WATER_COLOR);
-      } 
-      else if (this.map[0][i-1] === EARTH_POINT_TYPE) {
-        var last_used = row[i-1];
-        row.push(last_used);
+
+  colorize(color, i, j, map) {
+    var pointType = this.map[i][j];
+    if (pointType === EARTH_POINT_TYPE) {
+      map[i][j] = color;
+      if (this.map[i][j + 1] === EARTH_POINT_TYPE && map[i][j +1] !== color ) {
+        this.colorize(color, i, j + 1, map);
       }
-      else {
-        row.push(this.generateRandomColor());
+       if (i < this.map.length - 1 && this.map[i + 1][j] === EARTH_POINT_TYPE && map[i + 1][j ] !== color) {
+        this.colorize(color, i + 1, j, map);
+      }
+       if (this.map[i][j - 1] === EARTH_POINT_TYPE && map[i][j -1] !== color) {
+        this.colorize(color, i, j - 1, map);
+      }
+       if (i > 0 && this.map[i - 1][j] === EARTH_POINT_TYPE && map[i - 1][j] !== color) {
+        this.colorize(color, i - 1, j, map);
       }
     }
-    return row;
   }
 
   getColoredMap() {
-    var coloredMap = [];
-
-    coloredMap.push(this.setFirstRow());
-    for (var i = 1; i < this.map.length; i++) {
-      var row = [];
+    var coloredMap = this.getRawMap();
+    for (var i = 0; i < this.map.length; i++) {
       for (var j = 0; j < this.map[i].length; j++) {
-        if (this.map[i][j] === WATER_POINT_TYPE) {
-          row.push(DEFAULT_WATER_COLOR);
-        }
-        if (this.map[i][j] === EARTH_POINT_TYPE) {
-          if (this.map[i - 1][j] === EARTH_POINT_TYPE) { 
-            row.push(coloredMap[i - 1][j]);
-            for (var k = j -1 ; k >= 0; k--) {
-              if (this.map[i][k] === EARTH_POINT_TYPE) {
-                
-                row[k] = coloredMap[i - 1][j];
-              } else {
-                break;
-              }
-            }
-          } else if (this.map[i][j - 1] === EARTH_POINT_TYPE) {
-            row.push(row[j - 1]);
-          } else {
-            row.push(this.generateRandomColor());
-          }
-        }
+        this.colorize(this.generateRandomColor(), i, j, coloredMap);
       }
-      coloredMap.push(row);
     }
-     console.log(coloredMap);
     return coloredMap;
   }
 
